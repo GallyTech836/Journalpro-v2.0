@@ -19,9 +19,6 @@ export default function TradeFormModal({ trade, onClose }) {
       const res = (Number(formData.partialTP) * 0.5) + (Number(formData.finalTP) * 0.5);
       return parseFloat(res.toFixed(2));
     }
-    if (!isEditing || formData._typeTouched) {
-      return formData.type === 'Win' ? 1.0 : formData.type === 'Loss' ? -1.0 : 0.0;
-    }
     return null;
   })();
 
@@ -110,7 +107,7 @@ export default function TradeFormModal({ trade, onClose }) {
             <Field label="Resultado">
               <select
                 value={formData.type}
-                onChange={e => set({ type: e.target.value, _typeTouched: true })}
+                onChange={e => set({ type: e.target.value })}
                 disabled={formData.hasPartial}
                 className={`${inputClass} disabled:opacity-50`}
               >
@@ -155,10 +152,10 @@ export default function TradeFormModal({ trade, onClose }) {
           {formData.hasPartial && (
             <div className="grid grid-cols-2 gap-3">
               <Field label="TP parcial (%)">
-                <input type="number" step="0.1" value={formData.partialTP} onChange={e => set({ partialTP: Number(e.target.value) })} className={inputClass} />
+                <input type="number" step="0.1" value={formData.partialTP} onChange={e => set({ partialTP: e.target.value })} className={inputClass} />
               </Field>
               <Field label="TP runner (%)">
-                <input type="number" step="0.1" value={formData.finalTP} onChange={e => set({ finalTP: Number(e.target.value) })} className={inputClass} />
+                <input type="number" step="0.1" value={formData.finalTP} onChange={e => set({ finalTP: e.target.value })} className={inputClass} />
               </Field>
             </div>
           )}
@@ -166,7 +163,7 @@ export default function TradeFormModal({ trade, onClose }) {
             <Field label="Resultado neto (%)">
             <input
               type="number" step="0.01" value={computedRResult !== null ? computedRResult : formData.rResult}
-              onChange={e => set({ rResult: Number(e.target.value) })}
+              onChange={e => set({ rResult: e.target.value })}
               disabled={formData.hasPartial}
               className={`${inputClass} font-semibold text-brand disabled:opacity-60`}
               required
