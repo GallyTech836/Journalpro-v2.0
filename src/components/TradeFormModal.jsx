@@ -100,8 +100,8 @@ export default function TradeFormModal({ trade, onClose }) {
           <div className="grid grid-cols-2 gap-3">
             <Field label="Dirección">
               <select value={formData.side} onChange={e => set({ side: e.target.value })} className={inputClass}>
-                <option value="Buy">Long</option>
-                <option value="Sell">Short</option>
+                <option value="Buy">Buy</option>
+                <option value="Sell">Sell</option>
               </select>
             </Field>
             <Field label="Resultado">
@@ -111,8 +111,8 @@ export default function TradeFormModal({ trade, onClose }) {
                 disabled={formData.hasPartial}
                 className={`${inputClass} disabled:opacity-50`}
               >
-                <option value="Win">Win</option>
-                <option value="Loss">Loss</option>
+                <option value="TP">Take Profit</option>
+                <option value="SL">Stop Loss</option>
                 <option value="BE">Break Even</option>
               </select>
             </Field>

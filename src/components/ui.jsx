@@ -39,7 +39,7 @@ export function DirectionPill({ side }) {
       isShort ? 'text-warn bg-warn-dim border-warn/20' : 'text-brand bg-brand-dim border-brand/20'
     }`}>
       {isShort ? <ArrowDownRight size={10} /> : <ArrowUpRight size={10} />}
-      {isShort ? 'Short' : 'Long'}
+      {isShort ? 'Sell' : 'Buy'}
     </span>
   );
 }

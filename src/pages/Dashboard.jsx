@@ -101,7 +101,7 @@ export default function Dashboard() {
         <div className="space-y-4">
           <div className="bg-surface border border-border rounded-2xl p-5">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-4 flex items-center gap-1.5">
-              <Trophy size={13} /> Best Setup
+              <Trophy size={13} /> Mejor Setup
             </h3>
             {bestSetup ? (
               <>
@@ -115,7 +115,7 @@ export default function Dashboard() {
           </div>
           <div className="bg-surface border border-border rounded-2xl p-5">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-4 flex items-center gap-1.5">
-              <Award size={13} /> Best Session
+              <Award size={13} /> Mejor Session
             </h3>
             {bestSession ? (
               <>
@@ -129,7 +129,7 @@ export default function Dashboard() {
           </div>
           <div className="bg-surface border border-border rounded-2xl p-5">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-4 flex items-center gap-1.5">
-              <Target size={13} /> Best Asset
+              <Target size={13} /> Mejor Activo
             </h3>
             {bestAsset ? (
               <>
@@ -147,7 +147,7 @@ export default function Dashboard() {
       <div className="bg-surface border border-border rounded-2xl overflow-hidden">
         <div className="px-5 sm:px-6 py-4 border-b border-border flex items-center justify-between">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-muted flex items-center gap-1.5">
-            <Clock size={13} /> Recent Trades
+            <Clock size={13} /> Trades Recientes
           </h3>
           <button onClick={() => navigate('/journal')} className="text-xs font-medium text-brand hover:text-brand-hover">
             Ver todas

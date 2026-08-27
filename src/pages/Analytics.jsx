@@ -41,7 +41,7 @@ export default function Analytics() {
   const byAsset = useMemo(() => groupPerformance(filteredTrades, t => t.asset, settings), [filteredTrades, settings]);
   const bySetup = useMemo(() => groupPerformance(filteredTrades, t => t.setup, settings), [filteredTrades, settings]);
   const bySession = useMemo(() => groupPerformance(filteredTrades, t => t.session, settings), [filteredTrades, settings]);
-  const byDirection = useMemo(() => groupPerformance(filteredTrades, t => t.side === 'Sell' ? 'Short' : 'Long', settings), [filteredTrades, settings]);
+  const byDirection = useMemo(() => groupPerformance(filteredTrades, t => t.side === 'Sell' ? 'Sell' : 'Buy', settings), [filteredTrades, settings]);
 
   if (trades.length < 3) {
     return (

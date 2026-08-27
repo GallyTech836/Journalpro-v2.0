@@ -61,15 +61,15 @@ export default function FilterDrawer({ onClose }) {
           <Field label="Dirección">
             <select value={filters.direction} onChange={e => set({ direction: e.target.value })} className={inputClass}>
               <option value="All">Todas</option>
-              <option value="Buy">Long</option>
-              <option value="Sell">Short</option>
+              <option value="Buy">Buy</option>
+              <option value="Sell">Sell</option>
             </select>
           </Field>
           <Field label="Resultado">
             <select value={filters.result} onChange={e => set({ result: e.target.value })} className={inputClass}>
               <option value="All">Todos</option>
-              <option value="Win">Win</option>
-              <option value="Loss">Loss</option>
+              <option value="TP">Take Profit</option>
+              <option value="SL">Stop Loss</option>
               <option value="BE">Break Even</option>
             </select>
           </Field>
