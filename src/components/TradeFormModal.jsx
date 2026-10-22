@@ -5,11 +5,26 @@ import { detectSession, initialTradeState, normalizeDateString, calculateTimesta
 import { Field, inputClass, Button } from './ui';
 
 export default function TradeFormModal({ trade, onClose }) {
-  const { settings, addTrade, updateTrade } = useApp();
+  const { settings, addTrade, updateTrade, accounts, filters } = useApp();
   const isEditing = !!trade;
-  const [formData, setFormData] = useState(() =>
-    isEditing ? { ...initialTradeState, ...trade } : { ...initialTradeState, session: detectSession(initialTradeState.time) }
-  );
+
+  // Cuentas disponibles: las activas, más la del trade si se está editando
+  // una operación de una cuenta ya cerrada/quemada.
+  const accountOptions = accounts.filter(a => a.status === 'activa' || (isEditing && a.id === trade._accountId));
+  const useLegacyAccounts = accounts.length === 0;
+
+  const [formData, setFormData] = useState(() => {
+    if (isEditing) {
+      return { ...initialTradeState, ...trade, accountId: trade._accountId?.startsWith('legacy:') ? '' : trade._accountId };
+    }
+    const preferred = accountOptions.find(a => a.id === filters.account) || accountOptions[0];
+    return {
+      ...initialTradeState,
+      session: detectSession(initialTradeState.time),
+      accountId: preferred ? preferred.id : '',
+      accountType: preferred ? preferred.name : initialTradeState.accountType,
+    };
+  });
   const [showMore, setShowMore] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -24,11 +39,18 @@ export default function TradeFormModal({ trade, onClose }) {
 
   const set = (patch) => setFormData(prev => ({ ...prev, ...patch }));
 
+  const selectedAccount = accounts.find(a => a.id === formData.accountId);
+  const baseBalance = selectedAccount ? selectedAccount.initialBalance : (Number(settings.startingBalance) || 0);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     if (!formData.date || !formData.asset) {
       setError('Fecha y activo son obligatorios.');
+      return;
+    }
+    if (!useLegacyAccounts && !formData.accountId) {
+      setError('Elige una cuenta.');
       return;
     }
     setSaving(true);
@@ -42,6 +64,12 @@ export default function TradeFormModal({ trade, onClose }) {
       pnl: formData.pnl === '' || formData.pnl === null ? null : Number(formData.pnl),
     };
     delete payload._typeTouched;
+    // Campos calculados en memoria que no se guardan
+    delete payload.id;
+    delete payload._accountId;
+    delete payload._accountName;
+    delete payload._baseBalance;
+    if (!payload.accountId) delete payload.accountId;
     try {
       if (isEditing) {
         await updateTrade(trade.id, payload);
@@ -91,9 +119,23 @@ export default function TradeFormModal({ trade, onClose }) {
               </select>
             </Field>
             <Field label="Cuenta">
-              <select value={formData.accountType} onChange={e => set({ accountType: e.target.value })} className={inputClass}>
-                {settings.accounts.map(a => <option key={a} value={a}>{a}</option>)}
-              </select>
+              {useLegacyAccounts ? (
+                <select value={formData.accountType} onChange={e => set({ accountType: e.target.value })} className={inputClass}>
+                  {settings.accounts.map(a => <option key={a} value={a}>{a}</option>)}
+                </select>
+              ) : (
+                <select
+                  value={formData.accountId}
+                  onChange={e => {
+                    const acc = accounts.find(a => a.id === e.target.value);
+                    set({ accountId: e.target.value, accountType: acc ? acc.name : '' });
+                  }}
+                  className={inputClass}
+                >
+                  {!formData.accountId && <option value="">Elegir…</option>}
+                  {accountOptions.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                </select>
+              )}
             </Field>
           </div>
 
@@ -170,9 +212,9 @@ export default function TradeFormModal({ trade, onClose }) {
               placeholder="0.30"
             />
             </Field>
-             {settings.startingBalance > 0 && (
-             <p className="text-[11px] text-faint -mt-2.5">
-              = ${((Number(settings.startingBalance) || 0) * ((Number(computedRResult !== null ? computedRResult : formData.rResult) || 0) / 100)).toFixed(2)} sobre tu balance de {Number(settings.startingBalance).toLocaleString('es-ES')}
+          {baseBalance > 0 && (
+            <p className="text-[11px] text-faint -mt-2.5">
+              = ${(baseBalance * ((Number(computedRResult !== null ? computedRResult : formData.rResult) || 0) / 100)).toFixed(2)} sobre un balance de {baseBalance.toLocaleString('es-ES')}
             </p>
           )}
 

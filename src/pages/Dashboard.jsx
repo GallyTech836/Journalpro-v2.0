@@ -4,12 +4,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Wallet, Target, TrendingUp, Layers, ChartBar as BarChart3, Clock, Trophy, Award, Compass, ListFilter as Filter } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { computeAllMetrics, buildEquityCurve, groupPerformance } from '../shared/metrics';
+import { computeAccountStats } from '../shared/accounts';
 import { StatCard, RValue, PnlValue, ResultPill, DirectionPill, IconButton } from '../components/ui';
 import EmptyState from '../components/EmptyState';
 import FilterDrawer from '../components/FilterDrawer';
 
 export default function Dashboard() {
-  const { trades, filteredTrades, activeFilterCount, settings } = useApp();
+  const { trades, filteredTrades, activeFilterCount, settings, accounts, accountsById, filters } = useApp();
   const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
 
@@ -25,7 +26,21 @@ export default function Dashboard() {
   const bestSession = [...bySession].sort((a, b) => b.netR - a.netR)[0];
   const bestAsset = [...byAsset].sort((a, b) => b.netR - a.netR)[0];
 
-  const balance = settings.startingBalance + metrics.netPnl;
+  // Balance: si hay una cuenta filtrada, el de esa cuenta; si no, la suma de
+  // las cuentas activas. Sin cuentas creadas, se mantiene el cálculo anterior.
+  const { balance, balanceHint } = useMemo(() => {
+    const statsFor = (acc) => computeAccountStats(acc, trades.filter(t => t._accountId === acc.id));
+    const filteredAcc = accountsById[filters.account];
+    if (filteredAcc) return { balance: statsFor(filteredAcc).balance, balanceHint: filteredAcc.name };
+    const active = accounts.filter(a => a.status === 'activa');
+    if (active.length > 0) {
+      return {
+        balance: active.reduce((sum, a) => sum + statsFor(a).balance, 0),
+        balanceHint: active.length === 1 ? active[0].name : `${active.length} cuentas activas`,
+      };
+    }
+    return { balance: (Number(settings.startingBalance) || 0) + metrics.netPnl, balanceHint: undefined };
+  }, [trades, accounts, accountsById, filters.account, settings.startingBalance, metrics.netPnl]);
 
   if (trades.length === 0) {
     return (
@@ -59,7 +74,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard label="Balance" value={`$${balance.toFixed(2)}`} icon={Wallet} />
+        <StatCard label="Balance" value={`$${balance.toFixed(2)}`} icon={Wallet} hint={balanceHint} />
         <StatCard
           label="P&L Neto"
           value={<PnlValue value={metrics.netPnl} />}

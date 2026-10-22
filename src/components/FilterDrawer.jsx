@@ -4,7 +4,7 @@ import { useApp } from '../context/useApp';
 import { Field, inputClass, Button } from './ui';
 
 export default function FilterDrawer({ onClose }) {
-  const { trades, settings, filters, setFilters, clearFilters } = useApp();
+  const { trades, settings, filters, setFilters, clearFilters, accounts, legacyAccountNames } = useApp();
 
   const availableYears = useMemo(() => {
     const years = trades.map(t => {
@@ -55,7 +55,21 @@ export default function FilterDrawer({ onClose }) {
           <Field label="Cuenta">
             <select value={filters.account} onChange={e => set({ account: e.target.value })} className={inputClass}>
               <option value="All">Todas</option>
-              {settings.accounts.map(a => <option key={a} value={a}>{a}</option>)}
+              {accounts.filter(a => a.status === 'activa').length > 0 && (
+                <optgroup label="Activas">
+                  {accounts.filter(a => a.status === 'activa').map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                </optgroup>
+              )}
+              {accounts.filter(a => a.status !== 'activa').length > 0 && (
+                <optgroup label="Historial">
+                  {accounts.filter(a => a.status !== 'activa').map(a => <option key={a.id} value={a.id}>{a.name} ({a.status})</option>)}
+                </optgroup>
+              )}
+              {legacyAccountNames.length > 0 && (
+                <optgroup label="Sin configurar">
+                  {legacyAccountNames.map(n => <option key={n} value={`legacy:${n}`}>{n}</option>)}
+                </optgroup>
+              )}
             </select>
           </Field>
           <Field label="Dirección">

@@ -66,12 +66,12 @@ function SettingsForm({ settings, saveSettings }) {
         <h1 className="text-xl font-semibold tracking-tight flex items-center gap-2">
           <SettingsIcon size={18} className="text-muted" /> Settings
         </h1>
-        <p className="text-sm text-muted mt-0.5">Configura activos, setups, sesiones y cuentas</p>
+        <p className="text-sm text-muted mt-0.5">Configura activos, setups y sesiones</p>
       </div>
 
       <div className="bg-surface border border-border rounded-2xl p-5">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-4 flex items-center gap-1.5">
-          <Wallet size={13} /> Balance inicial
+          <Wallet size={13} /> Balance para operaciones sin cuenta
         </h3>
         <Field label="Balance de referencia ($)">
           <input
@@ -81,13 +81,13 @@ function SettingsForm({ settings, saveSettings }) {
             className={inputClass}
           />
         </Field>
-        <p className="text-[11px] text-faint mt-2">Se usa para calcular el balance mostrado en el Dashboard (balance inicial + P&L acumulado). El resultado (%) de cada operación se calcula sobre este balance.</p>
+        <p className="text-[11px] text-faint mt-2">Solo se usa para operaciones antiguas que no están enlazadas a ninguna cuenta. Las cuentas se crean en la sección Cuentas y cada una tiene su propio balance.</p>
       </div>
 
       <TagListEditor label="Activos" items={local.assets} onChange={(v) => update({ assets: v })} />
       <TagListEditor label="Setups" items={local.setups} onChange={(v) => update({ setups: v })} />
       <TagListEditor label="Sesiones" items={local.sessions} onChange={(v) => update({ sessions: v })} />
-      <TagListEditor label="Cuentas" items={local.accounts} onChange={(v) => update({ accounts: v })} />
+
 
       <div className="sticky bottom-4">
         <Button variant="primary" className="w-full" onClick={handleSave}>

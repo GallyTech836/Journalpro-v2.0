@@ -8,6 +8,7 @@ import Journal from './pages/Journal';
 import CalendarPage from './pages/Calendar';
 import Analytics from './pages/Analytics';
 import SettingsPage from './pages/Settings';
+import AccountsPage from './pages/Accounts';
 
 function AppShell() {
   const { isLoading } = useApp();
@@ -21,6 +22,7 @@ function AppShell() {
         <Route path="/journal" element={<Journal />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/analytics" element={<Analytics />} />
+        <Route path="/accounts" element={<AccountsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
     </Routes>

@@ -97,6 +97,7 @@ export function normalizeTrade(raw) {
     timestamp: ts,
     asset: raw.asset || 'XAUUSD',
     accountType: raw.accountType || raw.account_type || 'Real',
+    accountId: raw.accountId || raw.account_id || null,
     side: raw.side || 'Buy',
     type: raw.type || 'Win',
     setup: raw.setup || 'Otro',

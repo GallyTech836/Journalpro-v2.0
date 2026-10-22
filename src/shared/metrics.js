@@ -6,7 +6,11 @@
 // Si el trade tiene un P&L en $ cargado a mano, ese valor manda siempre.
 function effectivePnl(t, settings = {}) {
   if (t.pnl !== null && t.pnl !== undefined && t.pnl !== '') return Number(t.pnl) || 0;
-  const baseBalance = Number(settings.startingBalance) || 0;
+  // Cada trade usa el balance inicial de su cuenta; si no tiene cuenta,
+  // el balance de referencia de Settings.
+  const baseBalance = t._baseBalance !== undefined
+    ? Number(t._baseBalance) || 0
+    : Number(settings.startingBalance) || 0;
   return baseBalance * ((Number(t.rResult) || 0) / 100);
 }
 
